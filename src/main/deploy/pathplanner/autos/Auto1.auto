@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "startingToOutpost"
+            "pathName": "startingToDepot"
           }
         },
         {
@@ -19,7 +19,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "toClimb"
+            "pathName": "fromDepotToClimb"
           }
         }
       ]

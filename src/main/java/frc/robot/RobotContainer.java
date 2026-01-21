@@ -10,6 +10,7 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.FollowPathCommand;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -47,7 +48,10 @@ public class RobotContainer {
     private Intake intake = new Intake();
 
     public RobotContainer() {
-        autoChooser = AutoBuilder.buildAutoChooser("toOutpostThenClimb");
+        NamedCommands.registerCommand("IntakeOn", intake.runIntakeCommand(30.0));
+        NamedCommands.registerCommand("IntakeOff", drivetrain.runOnce(() -> intake.setVelocity(0)));
+
+        autoChooser = AutoBuilder.buildAutoChooser("Auto2");
         configureBindings();
 
         SmartDashboard.putData("Auto Mode", autoChooser);
@@ -60,8 +64,8 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                    .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
                     .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
@@ -77,7 +81,9 @@ public class RobotContainer {
         joystick.b().whileTrue(drivetrain.applyRequest(() ->
             point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
         ));
-        joystick.rightBumper().whileTrue(intake.runIntakeCommand(10.0));
+        joystick.y().whileTrue(intake.runIntakeCommand(30.0));
+        joystick.x().whileTrue(intake.runIntakeCommand(-30.0));
+
 
 
         // Run SysId routines when holding back/start and X/Y.
