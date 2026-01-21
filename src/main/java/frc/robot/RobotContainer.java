@@ -53,11 +53,11 @@ public class RobotContainer {
     private final VisionSubsystem vision1 = new VisionSubsystem(drivetrain, "limelight-fleft");
     private final VisionSubsystem vision2 = new VisionSubsystem(drivetrain, "limelight-fright");
 
-
     public RobotContainer() {
         NamedCommands.registerCommand("IntakeOn", intake.runIntakeCommand(30.0));
         NamedCommands.registerCommand("IntakeOff", drivetrain.runOnce(() -> intake.setVelocity(0)));
         NamedCommands.registerCommand("AlignToTower", alignment.alignToTower());
+
 
         autoChooser = AutoBuilder.buildAutoChooser("Auto2");
         configureBindings();
