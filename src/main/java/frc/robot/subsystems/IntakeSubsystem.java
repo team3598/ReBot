@@ -5,6 +5,8 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
@@ -42,4 +44,5 @@ public class IntakeSubsystem extends SubsystemBase {
     public Command endIntakeCommand() {
         return new InstantCommand(() -> this.intakeMotor.stopMotor());
     }
+    
 }
