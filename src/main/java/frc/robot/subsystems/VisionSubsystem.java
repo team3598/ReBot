@@ -1,9 +1,11 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.Vector;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -12,17 +14,20 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.LimelightHelpers;
 
-
 public class VisionSubsystem extends SubsystemBase {
     private final CommandSwerveDrivetrain drivetrain;
     private final String limelightName;
+    private LimelightHelpers.PoseEstimate mt1; // we use megatag 1 for the yaw, since megatag 2 assumes you already have the yaw
+    private LimelightHelpers.PoseEstimate mt2; // megatag 2 for translation, mt1 for rotation
 
+    
     public VisionSubsystem(CommandSwerveDrivetrain drivetrain, String limelightName) { //constructor
         this.drivetrain = drivetrain; 
         this.limelightName = limelightName;
+        mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
     }
 
-    private edu.wpi.first.math.Vector<N3> calculateStdDev(double distance) {
+    private Vector<N3> calculateStdDev(double distance) {
         double xyUncertainty = Math.max(0.05, 0.1 * Math.pow(distance, 2)); //there is Math.max because it'll spaz out if we dont give it a floor...
         double thetaUncertainty = Math.max(Units.degreesToRadians(2), Math.toRadians(40) * Math.pow(distance, 2));
         Vector<N3> calculatedStdDevs = VecBuilder.fill(xyUncertainty, xyUncertainty, thetaUncertainty); 
@@ -30,18 +35,34 @@ public class VisionSubsystem extends SubsystemBase {
         return calculatedStdDevs;
     }
 
-    @Override
-    public void periodic() {
-    LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(limelightName);
+    private void setMT2Yaw() { 
+        if (!LimelightHelpers.getTV(limelightName)) {
+            return;
+        }
+        else {
+            private double rotation = LimelightHelpers.getBotPoseEstimate_wpiBlue(limelightName).pose.getRotation().getDegrees();
+            drivetrain.resetPose(new Pose2d(LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName).pose.getTranslation(), drivetrain.getPigeon2().getRotation2d()));
+            }
+        }
     
-    if (mt1.tagCount > 0 && mt1.avgTagDist < 2.0) {
+    private void estimatePose() {
+        if (mt2.tagCount <= 0 || mt2 == null) {
+            return;
+        }
+
+        if (mt2.tagCount > 0 && mt2.avgTagDist < 2.0) {
             drivetrain.addVisionMeasurement(
-                mt1.pose, 
-                mt1.timestampSeconds, 
-                calculateStdDev(mt1.avgTagDist)
+                mt2.pose, 
+                mt2.timestampSeconds, 
+                calculateStdDev(mt2.avgTagDist)
             );
             System.out.println(drivetrain.getState().Pose.getTranslation());
         }
+    }
+
+    @Override
+    public void periodic() {
+        estimatePose();
     }
 }
 
