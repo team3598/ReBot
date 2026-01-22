@@ -51,6 +51,8 @@ public class RobotContainer {
     private Alignment alignment = new Alignment();
 
     private final VisionSubsystem vision1 = new VisionSubsystem(drivetrain, "limelight-fleft");
+    private final VisionSubsystem vision2 = new VisionSubsystem(drivetrain, "limelight-fright");
+
 
     public RobotContainer() {
         configureBindings();
@@ -85,11 +87,9 @@ public class RobotContainer {
         RobotModeTriggers.disabled().whileTrue(
             drivetrain.applyRequest(() -> idle).ignoringDisable(true)
         );
-
+        
         joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        joystick.b().whileTrue(drivetrain.applyRequest(() ->
-            point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
-        ));
+        joystick.b().whileTrue(alignment.alignToTower());
         joystick.y().whileTrue(intake.runIntakeCommand(30.0));
         joystick.x().whileTrue(intake.runIntakeCommand(-30.0));
 

@@ -34,18 +34,14 @@ public class VisionSubsystem extends SubsystemBase {
     public void periodic() {
     LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(limelightName);
     
-    if (mt1.tagCount > 0) {
-        double distance = drivetrain.getState().Pose.getTranslation().getDistance(mt1.pose.getTranslation());
-        System.out.println(distance);
-        
-        if (distance < 100.0) { 
+    if (mt1.tagCount > 0 && mt1.avgTagDist < 2.0) {
             drivetrain.addVisionMeasurement(
                 mt1.pose, 
                 mt1.timestampSeconds, 
-                calculateStdDev(distance)
+                calculateStdDev(mt1.avgTagDist)
             );
             System.out.println(drivetrain.getState().Pose.getTranslation());
         }
     }
 }
-}
+
