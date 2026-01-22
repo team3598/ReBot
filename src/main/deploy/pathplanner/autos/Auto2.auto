@@ -33,15 +33,12 @@
           "data": {
             "waitTime": 1.0
           }
-<<<<<<< HEAD
         },
         {
           "type": "named",
           "data": {
             "name": "AlignToTower"
           }
-=======
->>>>>>> 894cc0609d061f7b012e42392a06e3196715dff9
         }
       ]
     }

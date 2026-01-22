@@ -12,10 +12,10 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.FollowPathCommand;
+import com.pathplanner.lib.events.EventTrigger;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -25,7 +25,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.commands.Autos.Alignment;
 
@@ -47,21 +47,22 @@ public class RobotContainer {
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-    private Intake intake = new Intake();
+    private IntakeSubsystem intake = new IntakeSubsystem();
     private Alignment alignment = new Alignment();
 
     private final VisionSubsystem vision1 = new VisionSubsystem(drivetrain, "limelight-fleft");
-    private final VisionSubsystem vision2 = new VisionSubsystem(drivetrain, "limelight-fright");
 
     public RobotContainer() {
-        NamedCommands.registerCommand("IntakeOn", intake.runIntakeCommand(30.0));
-        NamedCommands.registerCommand("IntakeOff", drivetrain.runOnce(() -> intake.setVelocity(0)));
-        NamedCommands.registerCommand("AlignToTower", alignment.alignToTower());
-
-
-        autoChooser = AutoBuilder.buildAutoChooser("Auto2");
         configureBindings();
+        NamedCommands.registerCommand("IntakeOn", intake.beginIntakeCommand());
+        NamedCommands.registerCommand("IntakeOff", intake.endIntakeCommand());
+        NamedCommands.registerCommand("AlignToTower", alignment.alignToTower());
+        
 
+ 
+        autoChooser = AutoBuilder.buildAutoChooser("intaketest");
+        
+        
         SmartDashboard.putData("Auto Mode", autoChooser);
         FollowPathCommand.warmupCommand().schedule();
     }

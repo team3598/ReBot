@@ -13,8 +13,8 @@ import com.pathplanner.lib.path.PathConstraints;
 
 
 public class Alignment{
-    private final Pose2d towerPosition = new Pose2d(1.6, 3.75, Rotation2d.fromDegrees(0));
-    private final PathConstraints constraints = new PathConstraints(3.0, 3.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
+    private final Pose2d towerPosition = new Pose2d(1.6, 3.75, Rotation2d.fromDegrees(180));
+    private final PathConstraints constraints = new PathConstraints(0.5, 3.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
     //insert more positions for important places here
 
 

@@ -6,13 +6,14 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 
-public class Intake extends SubsystemBase {
-    private final TalonFX intakeMotor = new TalonFX(5);
+public class IntakeSubsystem extends SubsystemBase {
+    private final TalonFX intakeMotor = new TalonFX(5, "Drive Base");
     private final VelocityVoltage m_velocity = new VelocityVoltage(0);
 
-    public Intake() {
+    public IntakeSubsystem() {
         var configs = new TalonFXConfiguration();
         configs.Slot0.kP = 0.11;
         configs.Slot0.kV = 0.12;
@@ -32,5 +33,13 @@ public class Intake extends SubsystemBase {
         return this.runEnd(
         () -> this.setVelocity(rps), 
         () -> this.intakeMotor.stopMotor());
+    }
+
+  public Command beginIntakeCommand() {
+        return new InstantCommand(() -> this.setVelocity(30));
+    }
+
+    public Command endIntakeCommand() {
+        return new InstantCommand(() -> this.intakeMotor.stopMotor());
     }
 }
