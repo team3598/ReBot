@@ -51,6 +51,8 @@ public class PoseSubsystem extends SubsystemBase {
     private void estimatePose() {
         mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(limelightName);
         mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
+        // we add the re-definitions of megatags in order to update their bot pose estimates
+
 
         if (mt2.tagCount <= 0 || mt2 == null) {
             return;
