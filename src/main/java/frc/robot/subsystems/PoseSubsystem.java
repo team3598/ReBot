@@ -14,17 +14,17 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.LimelightHelpers;
 
-public class VisionSubsystem extends SubsystemBase {
+public class PoseSubsystem extends SubsystemBase {
     private final CommandSwerveDrivetrain drivetrain;
     private final String limelightName;
+    
     private LimelightHelpers.PoseEstimate mt1; // we use megatag 1 for the yaw, since megatag 2 assumes you already have the yaw
     private LimelightHelpers.PoseEstimate mt2; // megatag 2 for translation, mt1 for rotation
 
     
-    public VisionSubsystem(CommandSwerveDrivetrain drivetrain, String limelightName) { //constructor
+    public PoseSubsystem(CommandSwerveDrivetrain drivetrain, String limelightName) { //constructor
         this.drivetrain = drivetrain; 
         this.limelightName = limelightName;
-        mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
     }
 
     private Vector<N3> calculateStdDev(double distance) {
@@ -40,23 +40,28 @@ public class VisionSubsystem extends SubsystemBase {
             return;
         }
         else {
-            private double rotation = LimelightHelpers.getBotPoseEstimate_wpiBlue(limelightName).pose.getRotation().getDegrees();
-            drivetrain.resetPose(new Pose2d(LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName).pose.getTranslation(), drivetrain.getPigeon2().getRotation2d()));
+            double rotation = mt1.pose.getRotation().getDegrees();
+            drivetrain.getPigeon2().setYaw(rotation);
             }
         }
     
     private void estimatePose() {
+        mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(limelightName);
+        mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
+
         if (mt2.tagCount <= 0 || mt2 == null) {
             return;
         }
 
-        if (mt2.tagCount > 0 && mt2.avgTagDist < 2.0) {
+        if (mt2.rawFiducials[0].distToRobot < 4) {
+            setMT2Yaw();
+            
             drivetrain.addVisionMeasurement(
                 mt2.pose, 
                 mt2.timestampSeconds, 
                 calculateStdDev(mt2.avgTagDist)
             );
-            System.out.println(drivetrain.getState().Pose.getTranslation());
+            System.out.println(drivetrain.getState().Pose);
         }
     }
 

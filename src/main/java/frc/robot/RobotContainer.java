@@ -26,7 +26,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.VisionSubsystem;
+import frc.robot.subsystems.PoseSubsystem;
 import frc.robot.commands.Autos.Alignment;
 
 public class RobotContainer {
@@ -50,8 +50,8 @@ public class RobotContainer {
     private IntakeSubsystem intake = new IntakeSubsystem();
     private Alignment alignment = new Alignment();
 
-    private final VisionSubsystem vision1 = new VisionSubsystem(drivetrain, "limelight-fleft");
-    private final VisionSubsystem vision2 = new VisionSubsystem(drivetrain, "limelight-fright");
+    private final PoseSubsystem vision1 = new PoseSubsystem(drivetrain, "limelight-fleft");
+    //private final VisionSubsystem vision2 = new VisionSubsystem(drivetrain, "limelight-fright");
 
 
     public RobotContainer() {
