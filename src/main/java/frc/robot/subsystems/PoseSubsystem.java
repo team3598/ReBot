@@ -20,11 +20,14 @@ public class PoseSubsystem extends SubsystemBase {
     
     private LimelightHelpers.PoseEstimate mt1; // we use megatag 1 for the yaw, since megatag 2 assumes you already have the yaw
     private LimelightHelpers.PoseEstimate mt2; // megatag 2 for translation, mt1 for rotation
+    
 
     
     public PoseSubsystem(CommandSwerveDrivetrain drivetrain, String limelightName) { //constructor
         this.drivetrain = drivetrain; 
         this.limelightName = limelightName;
+        
+        
     }
 
     private Vector<N3> calculateStdDev(double distance) {
@@ -40,8 +43,8 @@ public class PoseSubsystem extends SubsystemBase {
             return;
         }
         else {
-            double rotation = mt1.pose.getRotation().getDegrees();
-            drivetrain.getPigeon2().setYaw(rotation);
+            drivetrain.seedFieldCentric(mt1.pose.getRotation());
+            LimelightHelpers.SetRobotOrientation(limelightName, mt1.pose.getRotation().getDegrees(), 0, 0, 0, 0, 0);
             }
         }
     
