@@ -30,7 +30,7 @@ public class PoseSubsystem extends SubsystemBase {
         if (!LimelightHelpers.getTV(name)) {return;} //if limelight not exist, then dont even bother running the rest
 
         double yawRate = drivetrain.getPigeon2().getAngularVelocityZWorld().getValueAsDouble();
-        double gyroYaw = drivetrain.getState().RawHeading.getDegrees();
+        double gyroYaw = drivetrain.getState().Pose.getRotation().getDegrees();
 
         LimelightHelpers.SetRobotOrientation(name, gyroYaw, yawRate, 0, 0, 0, 0); //gives MT2 the current rotation of the bot
 
@@ -40,6 +40,10 @@ public class PoseSubsystem extends SubsystemBase {
         Vector<N3> stdDevs = VecBuilder.fill(0.1, 0.1, 10.0); //we need our std dev for rotation to be high so that the robot uses the gyro for drivetrain, but the stddev will nudge the gyro in the right direction (if it drifts)
 
         drivetrain.addVisionMeasurement(mt2.pose, mt2.timestampSeconds, stdDevs);
+    }
+
+    public void printCurrentPose(){
+        System.out.println(drivetrain.getState().Pose);
     }
 }
 
