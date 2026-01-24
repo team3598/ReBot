@@ -42,9 +42,8 @@ public class PoseSubsystem extends SubsystemBase {
         if (!LimelightHelpers.getTV(limelightName)) {
             return;
         }
-        else {
-            drivetrain.seedFieldCentric(mt1.pose.getRotation());
-            LimelightHelpers.SetRobotOrientation(limelightName, mt1.pose.getRotation().getDegrees(), 0, 0, 0, 0, 0);
+        else {  
+            LimelightHelpers.SetRobotOrientation(limelightName, drivetrain.getState().Pose.getRotation().getDegrees(), 0, 0, 0, 0, 0);
             }
         }
     
@@ -53,8 +52,10 @@ public class PoseSubsystem extends SubsystemBase {
         mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
         // we add the re-definitions of megatags in order to update their bot pose estimates
 
+        
 
-        if (mt2.tagCount <= 0 || mt2 == null) {
+
+        if (mt2.tagCount <= 0 || mt2 == null || mt1.tagCount <= 0 || mt1 == null) {
             return;
         }
 
@@ -66,7 +67,7 @@ public class PoseSubsystem extends SubsystemBase {
                 mt2.timestampSeconds, 
                 calculateStdDev(mt2.avgTagDist)
             );
-            System.out.println(drivetrain.getState().Pose);
+            //System.out.println(drivetrain.getState().Pose);
         }
     }
 

@@ -51,7 +51,7 @@ public class RobotContainer {
     private Alignment alignment = new Alignment();
 
     private final PoseSubsystem vision1 = new PoseSubsystem(drivetrain, "limelight-fleft");
-    //private final VisionSubsystem vision2 = new VisionSubsystem(drivetrain, "limelight-fright");
+    private final PoseSubsystem vision2 = new PoseSubsystem(drivetrain, "limelight-fright");
 
 
     public RobotContainer() {

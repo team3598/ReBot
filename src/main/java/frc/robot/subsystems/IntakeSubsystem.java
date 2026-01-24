@@ -7,6 +7,8 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 public class IntakeSubsystem extends SubsystemBase {
@@ -35,11 +37,20 @@ public class IntakeSubsystem extends SubsystemBase {
         () -> this.intakeMotor.stopMotor());
     }
 
-  public Command beginIntakeCommand() {
+    public Command beginIntakeCommand() {
         return new InstantCommand(() -> this.setVelocity(30));
     }
 
     public Command endIntakeCommand() {
         return new InstantCommand(() -> this.intakeMotor.stopMotor());
+    }
+
+    public double getIntakeVelocity() {
+        return intakeMotor.getVelocity().getValueAsDouble();
+    } 
+
+    @Override
+    public void periodic() {
+        SmartDashboard.putNumber("IntakeVelocity", getIntakeVelocity());
     }
 }

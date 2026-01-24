@@ -126,10 +126,10 @@ public class TunerConstants {
 
 
     // Front Left
-    private static final int kFrontLeftDriveMotorId = 40;
-    private static final int kFrontLeftSteerMotorId = 29;
-    private static final int kFrontLeftEncoderId = 13;
-    private static final Angle kFrontLeftEncoderOffset = Rotations.of(-0.39697265625);
+    private static final int kFrontLeftDriveMotorId = 41;
+    private static final int kFrontLeftSteerMotorId = 24;
+    private static final int kFrontLeftEncoderId = 1;
+    private static final Angle kFrontLeftEncoderOffset = Rotations.of(-0.3759765625);
     private static final boolean kFrontLeftSteerMotorInverted = false;
     private static final boolean kFrontLeftEncoderInverted = false;
 
@@ -137,10 +137,10 @@ public class TunerConstants {
     private static final Distance kFrontLeftYPos = Inches.of(10.375);
 
     // Front Right
-    private static final int kFrontRightDriveMotorId = 30;
-    private static final int kFrontRightSteerMotorId = 27;
-    private static final int kFrontRightEncoderId = 2;
-    private static final Angle kFrontRightEncoderOffset = Rotations.of(0.453125);
+    private static final int kFrontRightDriveMotorId = 56;
+    private static final int kFrontRightSteerMotorId = 28;
+    private static final int kFrontRightEncoderId = 14;
+    private static final Angle kFrontRightEncoderOffset = Rotations.of(0.2978515625);
     private static final boolean kFrontRightSteerMotorInverted = false;
     private static final boolean kFrontRightEncoderInverted = false;
 
@@ -148,10 +148,10 @@ public class TunerConstants {
     private static final Distance kFrontRightYPos = Inches.of(-10.375);
 
     // Back Left
-    private static final int kBackLeftDriveMotorId = 56;
-    private static final int kBackLeftSteerMotorId = 28;
-    private static final int kBackLeftEncoderId = 14;
-    private static final Angle kBackLeftEncoderOffset = Rotations.of(0.308837890625);
+    private static final int kBackLeftDriveMotorId = 30;
+    private static final int kBackLeftSteerMotorId = 27;
+    private static final int kBackLeftEncoderId = 2;
+    private static final Angle kBackLeftEncoderOffset = Rotations.of(0.424560546875);
     private static final boolean kBackLeftSteerMotorInverted = false;
     private static final boolean kBackLeftEncoderInverted = false;
 
@@ -159,10 +159,10 @@ public class TunerConstants {
     private static final Distance kBackLeftYPos = Inches.of(10.375);
 
     // Back Right
-    private static final int kBackRightDriveMotorId = 41;
-    private static final int kBackRightSteerMotorId = 24;
-    private static final int kBackRightEncoderId = 0;
-    private static final Angle kBackRightEncoderOffset = Rotations.of(-0.375);
+    private static final int kBackRightDriveMotorId = 40;
+    private static final int kBackRightSteerMotorId = 29;
+    private static final int kBackRightEncoderId = 13;
+    private static final Angle kBackRightEncoderOffset = Rotations.of(-0.410400390625);
     private static final boolean kBackRightSteerMotorInverted = false;
     private static final boolean kBackRightEncoderInverted = false;
 
@@ -262,10 +262,10 @@ public class TunerConstants {
          *                                  unspecified or set to 0 Hz, this is 250 Hz on
          *                                  CAN FD, and 100 Hz on CAN 2.0.
          * @param odometryStandardDeviation The standard deviation for odometry calculation
-         *                                  in the form [x, y, theta]ᵀ, with units in meters
+         *                                  in the form [x, y, theta]áµ€, with units in meters
          *                                  and radians
          * @param visionStandardDeviation   The standard deviation for vision calculation
-         *                                  in the form [x, y, theta]ᵀ, with units in meters
+         *                                  in the form [x, y, theta]áµ€, with units in meters
          *                                  and radians
          * @param modules                   Constants for each specific module
          */
@@ -283,4 +283,4 @@ public class TunerConstants {
             );
         }
     }
-}
+}
