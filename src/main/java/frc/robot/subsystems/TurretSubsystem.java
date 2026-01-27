@@ -5,9 +5,12 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -17,6 +20,7 @@ public class TurretSubsystem extends SubsystemBase {
     private final TalonFX m_turretFeeder = new TalonFX(3, "Aux");
 
     private final VelocityVoltage m_velocity = new VelocityVoltage(0);
+    private final MotionMagicVoltage m_angleRequest = new MotionMagicVoltage(0); 
 
     public TurretSubsystem() {
         var configs = new TalonFXConfiguration();
@@ -56,6 +60,9 @@ public class TurretSubsystem extends SubsystemBase {
         );
       }
     
+    public double getDistToTarget(Pose2d robotPose, Translation2d targetPosition) {
+        return robotPose.getTranslation().getDistance(targetPosition);
+    }
 
     @Override
     public void periodic() {
