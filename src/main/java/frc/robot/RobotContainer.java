@@ -27,6 +27,7 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PoseSubsystem;
+import frc.robot.subsystems.TurretSubsystem;
 import frc.robot.commands.Autos.Alignment;
 
 public class RobotContainer {
@@ -48,6 +49,7 @@ public class RobotContainer {
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
     private IntakeSubsystem intake = new IntakeSubsystem();
+    private TurretSubsystem turret = new TurretSubsystem();
     private Alignment alignment = new Alignment();
 
     private final PoseSubsystem m_PoseSubsystem = new PoseSubsystem(drivetrain);
@@ -70,14 +72,14 @@ public class RobotContainer {
     private void configureBindings() {
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
-        drivetrain.setDefaultCommand(
+       /*drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
                 drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
                     .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
                     .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
-        );
+        );*/ //uncomment this later
 
         // Idle while the robot is disabled. This ensures the configured
         // neutral mode is applied to the drive motors while disabled.
@@ -87,10 +89,9 @@ public class RobotContainer {
         );
         
         joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        joystick.b().whileTrue(alignment.alignToTower());
+        joystick.b().whileTrue(turret.shootTurret(30));
         joystick.y().whileTrue(intake.runIntakeCommand(30.0));
         joystick.x().whileTrue(intake.runIntakeCommand(-30.0));
-
 
 
         // Run SysId routines when holding back/start and X/Y.
