@@ -27,7 +27,7 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PoseSubsystem;
-import frc.robot.subsystems.TurretSubsystem;
+import frc.robot.subsystems.Turret.TurretSubsystem;
 import frc.robot.commands.Autos.Alignment;
 
 public class RobotContainer {
@@ -80,7 +80,6 @@ public class RobotContainer {
                     .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );*/ //uncomment this later
-
         // Idle while the robot is disabled. This ensures the configured
         // neutral mode is applied to the drive motors while disabled.
         final var idle = new SwerveRequest.Idle();
@@ -89,10 +88,15 @@ public class RobotContainer {
         );
         
         joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        joystick.b().whileTrue(turret.shootTurret(30));
+        joystick.b().whileTrue(turret.shootTurret(32.5));
         joystick.y().whileTrue(intake.runIntakeCommand(30.0));
         joystick.x().whileTrue(intake.runIntakeCommand(-30.0));
 
+        joystick.povLeft().whileTrue(turret.goToAngle(0));
+        joystick.povRight().whileTrue(turret.goToAngle(7));
+
+        joystick.povUp().whileTrue(turret.goToHoodAngle(-80));
+        joystick.povDown().whileTrue(turret.goToHoodAngle(45));
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.

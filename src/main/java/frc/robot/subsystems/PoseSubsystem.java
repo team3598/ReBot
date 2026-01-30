@@ -136,7 +136,7 @@ public class PoseSubsystem extends SubsystemBase {
         for (String name : limelightNames) {
             updateVision(name);
         }
-        printCurrentPose();
+        //printCurrentPose();
         field.setRobotPose(drivetrain.getState().Pose);
     }
 
