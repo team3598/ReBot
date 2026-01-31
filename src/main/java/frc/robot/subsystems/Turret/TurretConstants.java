@@ -18,4 +18,5 @@ public class TurretConstants {
     public static final TalonFX turretHood = new TalonFX(1, "Aux");
 
     public static final DutyCycleEncoder turretTurnerEncoder = new DutyCycleEncoder(0/*change this*/);
+    public static final double turretTurnerOffset = 0.0; //placeholder value
 }

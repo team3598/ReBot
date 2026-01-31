@@ -37,9 +37,8 @@ public class TurretSubsystem extends SubsystemBase {
         var configs = new TalonFXConfiguration();
         /*configs.Slot0.kP = 1.75;
         configs.Slot0.kD = 0.05;*/
-        configs.Slot0.kP = 0.18;
-        configs.Slot0.kI = 0.0025;
-        configs.Slot0.kV = 0.138;
+        configs.Slot0.kP = 0.52;
+        configs.Slot0.kV = 0.18; //0.138
         configs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
         final TalonFXConfiguration turnerConfig = new TalonFXConfiguration();
