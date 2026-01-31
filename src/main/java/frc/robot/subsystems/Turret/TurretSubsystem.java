@@ -12,6 +12,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 
@@ -26,6 +27,7 @@ public class TurretSubsystem extends SubsystemBase {
     private final TalonFX turretShooter = TurretConstants.turretShooter;
     private final TalonFX turretFeeder = TurretConstants.turretFeeder;
     private final TalonFX turretHood = TurretConstants.turretHood;
+    private final DutyCycleEncoder turretTurnerEncoder = TurretConstants.turretTurnerEncoder;
 
     private final VelocityVoltage velocity = new VelocityVoltage(0);
     private final MotionMagicVoltage turnerMMRequest = new MotionMagicVoltage(0); 
@@ -41,16 +43,16 @@ public class TurretSubsystem extends SubsystemBase {
         configs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
         final TalonFXConfiguration turnerConfig = new TalonFXConfiguration();
-        turnerConfig.Feedback.SensorToMechanismRatio = 10.0; 
+        turnerConfig.Feedback.SensorToMechanismRatio = 10.0; //placeholder, change this
         turnerConfig.MotionMagic.MotionMagicCruiseVelocity = 0.5; 
         turnerConfig.MotionMagic.MotionMagicAcceleration = 1.0;  
         turnerConfig.MotionMagic.MotionMagicJerk = 10.0;         
         turnerConfig.Slot0.kP = 2.4; 
         turnerConfig.Slot0.kV = 1.5; 
         turnerConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        turnerConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0.5; 
+        turnerConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0; 
         turnerConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        turnerConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -0.5; 
+        turnerConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.05538; 
 
         final TalonFXConfiguration hoodConfig = new TalonFXConfiguration();
         hoodConfig.Feedback.SensorToMechanismRatio = 250.0; 
@@ -83,24 +85,30 @@ public class TurretSubsystem extends SubsystemBase {
             System.out.println("Could not configure Turret Hood Motor: " + turretHoodStatus.toString());
         }
 
+        turretTurnerEncoder.setDutyCycleRange(1/1025, 1024/1025);
         turretHood.setPosition(0); //the actual angle irl is 20, 20/360
-
+        resetTurretAngle();
     }
     
-    private boolean isShooterAtSpeed(double targetRPS) {
-        return Math.abs(turretShooter.getVelocity().getValueAsDouble() - targetRPS) < 1;
+    public void resetTurretAngle() {
+        double absolutePosition = turretTurnerEncoder.get() - TurretConstants.turretTurnerOffset;
+
+        if (absolutePosition < 1) {
+            absolutePosition += 1; //has to be between 0.1 - 0.9, no negatives
+        } 
+
+        double currentRotationsNeeded = absolutePosition;
+        turretTurner.setPosition(currentRotationsNeeded);
+
+        turretTurner.setControl(turnerMMRequest.withPosition(0));
     }
 
-    public double getDistToTarget(Pose2d robotPose, Translation2d targetPosition) {
-        return robotPose.getTranslation().getDistance(targetPosition);
+    public boolean isShooterAtSpeed(double targetRPS) {
+        return Math.abs(turretShooter.getVelocity().getValueAsDouble() - targetRPS) < 1;
     }
 
     public void moveTurretAngle(double turretRotations) {
         turretTurner.setControl(turnerMMRequest.withPosition(turretRotations));
-    }
-
-    public void moveHoodAngle(double degrees) {
-        turretHood.setControl(hoodMMRequest.withPosition(degrees/360));
     }
 
     public void aimAtTarget(double distance) {
@@ -108,10 +116,37 @@ public class TurretSubsystem extends SubsystemBase {
         //turret angle = arctan(distanceFromTarget) - headingOfRobot
     }
     
+    public void stopMotors(){
+        turretTurner.stopMotor();
+        turretHood.stopMotor();
+        turretShooter.stopMotor();
+        turretFeeder.stopMotor();
+    }
+
+    public void setShooterVelocity(double rps) {
+        turretShooter.setControl(velocity.withVelocity(rps));
+    }
+
+    public void setFeederVelocity(double rps) {
+        turretFeeder.setControl(velocity.withVelocity(rps));
+    }
+
+    public void setHoodAngle(double degrees) {
+        turretHood.setControl(hoodMMRequest.withPosition(degrees/360));
+    }
+
+    public double getFeederSpeed(){
+        return turretFeeder.getVelocity().getValueAsDouble();
+    }
+
+    public double getFlywheelSpeed(){
+        return turretShooter.getVelocity().getValueAsDouble();
+    }
+
     public Command goToHoodAngle(double degrees) {
        return this.runEnd(
         () -> {
-                moveHoodAngle(degrees);
+                setHoodAngle(degrees);
                 System.out.println("hood on. desired degrees of hood: " + degrees);
         },
         () -> turretHood.stopMotor()
@@ -143,7 +178,8 @@ public class TurretSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        System.out.println(turretShooter.getVelocity());
+        //include a print statement for absolute encoder offset, then set that later.
+        //System.out.println(turretShooter.getVelocity());
         //System.out.println(turretHood.getPosition());
         //System.out.println(turretTurner.getPosition());
     // This method will be called once per scheduler run

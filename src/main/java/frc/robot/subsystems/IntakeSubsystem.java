@@ -4,6 +4,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -27,6 +28,7 @@ public class IntakeSubsystem extends SubsystemBase {
         var configs = new TalonFXConfiguration();
         configs.Slot0.kP = 0.12;
         configs.Slot0.kV = 0.12;
+        configs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
         var intake_status = m_intake.getConfigurator().apply(configs);
         var intakeV_status = m_intakeVL.getConfigurator().apply(configs);

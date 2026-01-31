@@ -84,6 +84,7 @@ import java.util.List;
 
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
@@ -131,6 +132,18 @@ public class PoseSubsystem extends SubsystemBase {
         drivetrain.addVisionMeasurement(mt2.pose, mt2.timestampSeconds, stdDevs);
     }
 
+    public Pose2d getCurrentPose() {
+        return drivetrain.getState().Pose;
+    }
+
+    public double getDistToTarget(Translation2d targetPosition) {
+        return drivetrain.getState().Pose.getTranslation().getDistance(targetPosition);
+    }
+
+    public void printCurrentPose(){
+        System.out.println(drivetrain.getState().Pose);
+    }
+    
     @Override
     public void periodic() {
         for (String name : limelightNames) {
@@ -140,8 +153,5 @@ public class PoseSubsystem extends SubsystemBase {
         field.setRobotPose(drivetrain.getState().Pose);
     }
 
-    public void printCurrentPose(){
-        System.out.println(drivetrain.getState().Pose);
-        
-    }
+
 }

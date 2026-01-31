@@ -29,6 +29,7 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PoseSubsystem;
 import frc.robot.subsystems.Turret.TurretSubsystem;
 import frc.robot.commands.Autos.Alignment;
+import frc.robot.commands.TurretCalibrationCommand;
 
 public class RobotContainer {
     private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -51,8 +52,9 @@ public class RobotContainer {
     private IntakeSubsystem intake = new IntakeSubsystem();
     private TurretSubsystem turret = new TurretSubsystem();
     private Alignment alignment = new Alignment();
+    private final PoseSubsystem PoseSubsystem = new PoseSubsystem(drivetrain);
+    private TurretCalibrationCommand turretCalibrationCommand = new TurretCalibrationCommand(turret, PoseSubsystem);
 
-    private final PoseSubsystem m_PoseSubsystem = new PoseSubsystem(drivetrain);
 
     public RobotContainer() {
         configureBindings();
@@ -66,20 +68,21 @@ public class RobotContainer {
         
         
         SmartDashboard.putData("Auto Mode", autoChooser);
+        turretCalibrationCommand.ignoringDisable(true).schedule();
         FollowPathCommand.warmupCommand().schedule();
     }
     
     private void configureBindings() {
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
-       /*drivetrain.setDefaultCommand(
+       drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
                 drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
                     .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
                     .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
-        );*/ //uncomment this later
+        );
         // Idle while the robot is disabled. This ensures the configured
         // neutral mode is applied to the drive motors while disabled.
         final var idle = new SwerveRequest.Idle();
@@ -88,16 +91,29 @@ public class RobotContainer {
         );
         
         joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        joystick.b().whileTrue(turret.shootTurret(32.5));
+        joystick.b().whileTrue(
+            turret.runEnd(
+                () -> {
+                    turret.setShooterVelocity(turretCalibrationCommand.flywheelTunerNumber);
+                    if (turret.isShooterAtSpeed(turretCalibrationCommand.flywheelTunerNumber)) {
+                        turret.setFeederVelocity(50);
+                    }
+                },
+                () -> turret.stopMotors())
+            );
         joystick.y().whileTrue(intake.runIntakeCommand(30.0));
         joystick.x().whileTrue(intake.runIntakeCommand(-30.0));
 
         joystick.povLeft().whileTrue(turret.goToAngle(0));
         joystick.povRight().whileTrue(turret.goToAngle(7));
 
-        joystick.povUp().whileTrue(turret.goToHoodAngle(-80));
-        joystick.povDown().whileTrue(turret.goToHoodAngle(45));
-
+        joystick.povUp().whileTrue(
+            turret.runEnd(
+                () -> turret.setHoodAngle(turretCalibrationCommand.hoodTunerNumber),
+                () -> turret.stopMotors()
+                )
+        );
+        
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
         joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
