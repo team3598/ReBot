@@ -5,6 +5,7 @@
 package frc.robot.subsystems.Turret;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
@@ -16,7 +17,9 @@ public class TurretConstants {
     public static final TalonFX turretShooter = new TalonFX(5, "Aux");
     public static final TalonFX turretFeeder = new TalonFX(3, "Aux");
     public static final TalonFX turretHood = new TalonFX(1, "Aux");
+    public static final TalonFX turretHopper = new TalonFX(2, "Aux");
+    
 
-    public static final DutyCycleEncoder turretTurnerEncoder = new DutyCycleEncoder(0/*change this*/);
-    public static final double turretTurnerOffset = 0.0; //placeholder value
+    public static final CANcoder turretTurnerEncoder = new CANcoder(6, "Aux");
+    public static final double turretTurnerOffset = 0.5; 
 }

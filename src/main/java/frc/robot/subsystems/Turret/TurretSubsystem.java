@@ -4,9 +4,11 @@
 
 package frc.robot.subsystems.Turret;
 
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 
@@ -27,7 +29,8 @@ public class TurretSubsystem extends SubsystemBase {
     private final TalonFX turretShooter = TurretConstants.turretShooter;
     private final TalonFX turretFeeder = TurretConstants.turretFeeder;
     private final TalonFX turretHood = TurretConstants.turretHood;
-    private final DutyCycleEncoder turretTurnerEncoder = TurretConstants.turretTurnerEncoder;
+    private final TalonFX turretHopper = TurretConstants.turretHopper;
+    private final CANcoder turretTurnerEncoder = TurretConstants.turretTurnerEncoder;
 
     private final VelocityVoltage velocity = new VelocityVoltage(0);
     private final MotionMagicVoltage turnerMMRequest = new MotionMagicVoltage(0); 
@@ -42,15 +45,15 @@ public class TurretSubsystem extends SubsystemBase {
         configs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
         final TalonFXConfiguration turnerConfig = new TalonFXConfiguration();
-        turnerConfig.Feedback.SensorToMechanismRatio = 10.0; //placeholder, change this
-        turnerConfig.MotionMagic.MotionMagicCruiseVelocity = 0.5; 
+        turnerConfig.Feedback.SensorToMechanismRatio = 41.66666; //placeholder, change this
+        turnerConfig.MotionMagic.MotionMagicCruiseVelocity = 0.75; 
         turnerConfig.MotionMagic.MotionMagicAcceleration = 1.0;  
         turnerConfig.MotionMagic.MotionMagicJerk = 10.0;         
-        turnerConfig.Slot0.kP = 2.4; 
-        turnerConfig.Slot0.kV = 1.5; 
-        turnerConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+        turnerConfig.Slot0.kP = 12; 
+        turnerConfig.Slot0.kV = 0.1; 
+        turnerConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
         turnerConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0; 
-        turnerConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+        turnerConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
         turnerConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.05538; 
 
         final TalonFXConfiguration hoodConfig = new TalonFXConfiguration();
@@ -61,15 +64,15 @@ public class TurretSubsystem extends SubsystemBase {
         hoodConfig.Slot0.kP = 60; 
         hoodConfig.Slot0.kD = 0.1; 
         hoodConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        hoodConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0.055; 
+        hoodConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0.25;
         hoodConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        hoodConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0; 
+        hoodConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -0.25; 
 
         var turretTurnerStatus = turretTurner.getConfigurator().apply(turnerConfig);
         var turretShooterStatus = turretShooter.getConfigurator().apply(configs);
         var turretFeederStatus = turretFeeder.getConfigurator().apply(configs);
         var turretHoodStatus = turretHood.getConfigurator().apply(hoodConfig);
-
+        var turretHopperStatus = turretHopper.getConfigurator().apply(configs);
 
         if (!turretTurnerStatus.isOK()) {
             System.out.println("Could not configure Turret Turner Motor: " + turretTurnerStatus.toString());
@@ -84,22 +87,16 @@ public class TurretSubsystem extends SubsystemBase {
             System.out.println("Could not configure Turret Hood Motor: " + turretHoodStatus.toString());
         }
 
-        turretTurnerEncoder.setDutyCycleRange(1/1025, 1024/1025);
-        turretHood.setPosition(0); //the actual angle irl is 20, 20/360
         resetTurretAngle();
+        turretHood.setPosition(0); //the actual angle irl is 20, 20/360
     }
-    
+
     public void resetTurretAngle() {
-        double absolutePosition = turretTurnerEncoder.get() - TurretConstants.turretTurnerOffset;
+        double absolutePosition = turretTurnerEncoder.getAbsolutePosition().getValueAsDouble();
 
-        if (absolutePosition < 1) {
-            absolutePosition += 1; //has to be between 0.1 - 0.9, no negatives
-        } 
+        double calibratedPosition = absolutePosition - TurretConstants.turretTurnerOffset;
 
-        double currentRotationsNeeded = absolutePosition;
-        turretTurner.setPosition(currentRotationsNeeded);
-
-        turretTurner.setControl(turnerMMRequest.withPosition(0));
+        turretTurner.setPosition(calibratedPosition);
     }
 
     public boolean isShooterAtSpeed(double targetRPS) {
@@ -134,6 +131,10 @@ public class TurretSubsystem extends SubsystemBase {
         turretHood.setControl(hoodMMRequest.withPosition(degrees/360));
     }
 
+    public void setHopperSpeed(double rps) {
+        turretHopper.setControl(velocity.withVelocity(rps));
+    }
+    
     public double getFeederSpeed(){
         return turretFeeder.getVelocity().getValueAsDouble();
     }

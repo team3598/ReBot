@@ -96,23 +96,33 @@ public class RobotContainer {
                 () -> {
                     turret.setShooterVelocity(turretCalibrationCommand.flywheelTunerNumber);
                     if (turret.isShooterAtSpeed(turretCalibrationCommand.flywheelTunerNumber)) {
-                        turret.setFeederVelocity(50);
+                        turret.setFeederVelocity(80);
                     }
                 },
                 () -> turret.stopMotors())
             );
         joystick.y().whileTrue(intake.runIntakeCommand(30.0));
-        joystick.x().whileTrue(intake.runIntakeCommand(-30.0));
+        joystick.x().whileTrue(
+            turret.runEnd(
+                () -> turret.setHopperSpeed(20),
+                () -> turret.setHopperSpeed(0))
+        );
 
-        joystick.povLeft().whileTrue(turret.goToAngle(0));
-        joystick.povRight().whileTrue(turret.goToAngle(7));
+        joystick.povLeft().whileTrue(turret.goToAngle(-90));
+        joystick.povRight().whileTrue(turret.goToAngle(90));
+        //joystick.povDown().whileTrue(turret.goToAngle(0));
+        
+        
+        joystick.povUp().whileTrue(intake.setIntakeVerticalPosition(-7.95));
+        joystick.povDown().whileTrue(intake.setIntakeVerticalPosition(0));
 
-        joystick.povUp().whileTrue(
+        /*joystick.povUp().whileTrue(
             turret.runEnd(
                 () -> turret.setHoodAngle(turretCalibrationCommand.hoodTunerNumber),
                 () -> turret.stopMotors()
                 )
-        );
+        );*/
+
         
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
