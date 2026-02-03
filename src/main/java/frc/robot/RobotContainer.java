@@ -95,26 +95,31 @@ public class RobotContainer {
             turret.runEnd(
                 () -> {
                     turret.setShooterVelocity(turretCalibrationCommand.flywheelTunerNumber);
+                    intake.setIntakeVelocity(20);
                     if (turret.isShooterAtSpeed(turretCalibrationCommand.flywheelTunerNumber)) {
                         turret.setFeederVelocity(80);
+                        turret.setHopperSpeed(20);
                     }
                 },
-                () -> turret.stopMotors())
+                () -> {
+                    turret.stopMotors();
+                    intake.setIntakeVelocity(0);
+                })
             );
         joystick.y().whileTrue(intake.runIntakeCommand(30.0));
         joystick.x().whileTrue(
             turret.runEnd(
                 () -> turret.setHopperSpeed(20),
-                () -> turret.setHopperSpeed(0))
+                () -> turret.setHopperSpeed(0)) //20 is backwards, make it -20!!!
         );
 
         joystick.povLeft().whileTrue(turret.goToAngle(-90));
         joystick.povRight().whileTrue(turret.goToAngle(90));
-        //joystick.povDown().whileTrue(turret.goToAngle(0));
+        joystick.povDown().whileTrue(turret.goToAngle(0));
         
         
         joystick.povUp().whileTrue(intake.setIntakeVerticalPosition(-7.95));
-        joystick.povDown().whileTrue(intake.setIntakeVerticalPosition(0));
+        //joystick.povDown().whileTrue(intake.setIntakeVerticalPosition(0));
 
         /*joystick.povUp().whileTrue(
             turret.runEnd(

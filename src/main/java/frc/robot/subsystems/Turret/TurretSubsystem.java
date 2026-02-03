@@ -14,6 +14,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -31,11 +32,13 @@ public class TurretSubsystem extends SubsystemBase {
     private final TalonFX turretHood = TurretConstants.turretHood;
     private final TalonFX turretHopper = TurretConstants.turretHopper;
     private final CANcoder turretTurnerEncoder = TurretConstants.turretTurnerEncoder;
+    private final AnalogPotentiometer tTurnerPot = TurretConstants.turretTurnerPotentiometer;
 
     private final VelocityVoltage velocity = new VelocityVoltage(0);
     private final MotionMagicVoltage turnerMMRequest = new MotionMagicVoltage(0); 
     private final MotionMagicVoltage hoodMMRequest = new MotionMagicVoltage(0); 
 
+    
     public TurretSubsystem() {
         var configs = new TalonFXConfiguration();
         /*configs.Slot0.kP = 1.75;
@@ -86,17 +89,19 @@ public class TurretSubsystem extends SubsystemBase {
         if (!turretHoodStatus.isOK()) {
             System.out.println("Could not configure Turret Hood Motor: " + turretHoodStatus.toString());
         }
+        if (!turretHopperStatus.isOK()) {
+            System.out.println("Could not configure Turret Hopper Motor: " + turretHopperStatus.toString());
+        }
 
         resetTurretAngle();
         turretHood.setPosition(0); //the actual angle irl is 20, 20/360
     }
 
     public void resetTurretAngle() {
-        double absolutePosition = turretTurnerEncoder.getAbsolutePosition().getValueAsDouble();
+       double offset = tTurnerPot.get();
 
-        double calibratedPosition = absolutePosition - TurretConstants.turretTurnerOffset;
-
-        turretTurner.setPosition(calibratedPosition);
+       double offsetPos = offset * 100 / 36;
+       turretTurner.setPosition(offsetPos);
     }
 
     public boolean isShooterAtSpeed(double targetRPS) {
@@ -117,6 +122,7 @@ public class TurretSubsystem extends SubsystemBase {
         turretHood.stopMotor();
         turretShooter.stopMotor();
         turretFeeder.stopMotor();
+        turretHopper.stopMotor();
     }
 
     public void setShooterVelocity(double rps) {
@@ -155,15 +161,21 @@ public class TurretSubsystem extends SubsystemBase {
     
     public Command shootTurret(double rps) {
         return this.runOnce(
-            () -> {turretShooter.setControl(velocity.withVelocity(rps));}
+            () -> {
+                setShooterVelocity(rps);
+            }
         ).andThen(
             waitUntil(()->isShooterAtSpeed(rps))
         ).andThen(
-            this.run(()->turretFeeder.setControl(velocity.withVelocity(100)))
+            this.run(()->{
+                setFeederVelocity(100);
+                setHopperSpeed(50);
+            })
         ).finallyDo(
             (interrupted)->{
             turretShooter.stopMotor();
             turretFeeder.stopMotor();
+            turretHopper.stopMotor();
             }
         );
       }
@@ -182,6 +194,7 @@ public class TurretSubsystem extends SubsystemBase {
         //System.out.println(turretShooter.getVelocity());
         //System.out.println(turretHood.getPosition());
         //System.out.println(turretTurner.getPosition());
+        System.out.println(tTurnerPot.get());
     // This method will be called once per scheduler run
     }
 }

@@ -110,7 +110,7 @@ public class IntakeSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         m_intakeVR.setControl(m_followRequest);
-        System.out.println(m_intakeVL.getPosition());
+        //System.out.println(m_intakeVL.getPosition());
         SmartDashboard.putNumber("IntakeVelocity", getIntakeVelocity());
     }
 }
