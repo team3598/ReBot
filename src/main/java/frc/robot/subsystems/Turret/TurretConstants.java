@@ -8,6 +8,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj.AnalogAccelerometer;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
@@ -20,20 +21,17 @@ public class TurretConstants {
     public static final TalonFX turretFeeder = new TalonFX(3, "Aux");
     public static final TalonFX turretHood = new TalonFX(1, "Aux");
     public static final TalonFX turretHopper = new TalonFX(2, "Aux");
-    public static final AnalogPotentiometer channel0 = new AnalogPotentiometer(0);
-    public static final AnalogPotentiometer channel1 = new AnalogPotentiometer(1);
-    public static final AnalogPotentiometer channel2 = new AnalogPotentiometer(2);
-    public static final AnalogPotentiometer channel3 = new AnalogPotentiometer(3);
-    public static final AnalogPotentiometer channel4 = new AnalogPotentiometer(4);
-    public static final AnalogPotentiometer channel5 = new AnalogPotentiometer(5);
-    public static final AnalogPotentiometer channel6 = new AnalogPotentiometer(6);
-    public static final AnalogPotentiometer channel7 = new AnalogPotentiometer(7);
-
-
-
+    public static final AnalogPotentiometer turretTurnerPotentiometer = new AnalogPotentiometer(4);
     public static final double pOffset = 0.000339498078;
+
+    public static InterpolatingDoubleTreeMap shooterSpdFromDist = new InterpolatingDoubleTreeMap();
 
     //temporary
     public static final CANcoder turretTurnerEncoder = new CANcoder(6, "Aux");
     public static final double turretTurnerOffset = 0.5; 
+
+    public static void shooterSpeedMap() {
+        shooterSpdFromDist.put(0.5, 10.0);
+        shooterSpdFromDist.put(1.0, 12.5);
+    }
 }

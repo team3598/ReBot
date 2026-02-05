@@ -32,7 +32,7 @@ public class TurretSubsystem extends SubsystemBase {
     private final TalonFX turretHood = TurretConstants.turretHood;
     private final TalonFX turretHopper = TurretConstants.turretHopper;
     private final CANcoder turretTurnerEncoder = TurretConstants.turretTurnerEncoder;
-    private final AnalogPotentiometer tTurnerPot = TurretConstants.turretTurnerPotentiometer;
+    //private final AnalogPotentiometer tTurnerPot = TurretConstants.turretTurnerPotentiometer;
 
     private final VelocityVoltage velocity = new VelocityVoltage(0);
     private final MotionMagicVoltage turnerMMRequest = new MotionMagicVoltage(0); 
@@ -98,10 +98,9 @@ public class TurretSubsystem extends SubsystemBase {
     }
 
     public void resetTurretAngle() {
-       double offset = tTurnerPot.get();
-
-       double offsetPos = offset * 100 / 36;
-       turretTurner.setPosition(offsetPos);
+        double absolutePosition = turretTurnerEncoder.getAbsolutePosition().getValueAsDouble();
+        double calibratedPosition = absolutePosition - TurretConstants.turretTurnerOffset;
+        turretTurner.setPosition(calibratedPosition);
     }
 
     public boolean isShooterAtSpeed(double targetRPS) {
@@ -149,6 +148,10 @@ public class TurretSubsystem extends SubsystemBase {
         return turretShooter.getVelocity().getValueAsDouble();
     }
 
+    public double calculatedShotSpeed() {
+        return 10.0;
+    }
+
     public Command goToHoodAngle(double degrees) {
        return this.runEnd(
         () -> {
@@ -194,7 +197,6 @@ public class TurretSubsystem extends SubsystemBase {
         //System.out.println(turretShooter.getVelocity());
         //System.out.println(turretHood.getPosition());
         //System.out.println(turretTurner.getPosition());
-        System.out.println(tTurnerPot.get());
     // This method will be called once per scheduler run
     }
 }

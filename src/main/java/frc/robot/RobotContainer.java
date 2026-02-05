@@ -92,7 +92,7 @@ public class RobotContainer {
         
         joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
         joystick.b().whileTrue(
-            turret.runEnd(
+            turret.runEnd(      
                 () -> {
                     turret.setShooterVelocity(turretCalibrationCommand.flywheelTunerNumber);
                     intake.setIntakeVelocity(20);
@@ -115,11 +115,11 @@ public class RobotContainer {
 
         joystick.povLeft().whileTrue(turret.goToAngle(-90));
         joystick.povRight().whileTrue(turret.goToAngle(90));
-        joystick.povDown().whileTrue(turret.goToAngle(0));
+        //joystick.povDown().whileTrue(turret.goToAngle(0));
         
         
-        joystick.povUp().whileTrue(intake.setIntakeVerticalPosition(-7.95));
-        //joystick.povDown().whileTrue(intake.setIntakeVerticalPosition(0));
+        joystick.povUp().whileTrue(intake.setIntakeVerticalPosition(-7.85));
+        joystick.povDown().whileTrue(intake.setIntakeVerticalPosition(0.05));
 
         /*joystick.povUp().whileTrue(
             turret.runEnd(

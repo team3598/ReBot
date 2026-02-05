@@ -34,16 +34,17 @@ public class IntakeSubsystem extends SubsystemBase {
         configs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
         final TalonFXConfiguration intakeVConfig = new TalonFXConfiguration();
-        intakeVConfig.Feedback.SensorToMechanismRatio = 1.0; //placeholder, change this
-        intakeVConfig.MotionMagic.MotionMagicCruiseVelocity = 1; 
-        intakeVConfig.MotionMagic.MotionMagicAcceleration = 1.0;  
-        intakeVConfig.MotionMagic.MotionMagicJerk = 10.0;         
-        intakeVConfig.Slot0.kP = 0.2; 
-        intakeVConfig.Slot0.kV = 0.09; 
+        intakeVConfig.Feedback.SensorToMechanismRatio = 1.0; 
+        intakeVConfig.MotionMagic.MotionMagicCruiseVelocity = 60;
+        intakeVConfig.MotionMagic.MotionMagicAcceleration = 60;  
+        intakeVConfig.MotionMagic.MotionMagicJerk = 12.0;         
+        intakeVConfig.Slot0.kP = 0.25; 
+        intakeVConfig.Slot0.kG = 0.5; 
+        intakeVConfig.Slot0.kV = 1.4;
         intakeVConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        intakeVConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0.01; 
+        intakeVConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0.05; 
         intakeVConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        intakeVConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -8; 
+        intakeVConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -7.85; 
 
         var intake_status = m_intake.getConfigurator().apply(configs);
         var intakeV_status = m_intakeVL.getConfigurator().apply(intakeVConfig);
