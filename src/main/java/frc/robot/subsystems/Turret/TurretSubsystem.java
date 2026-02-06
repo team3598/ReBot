@@ -58,6 +58,7 @@ public class TurretSubsystem extends SubsystemBase {
         turnerConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0; 
         turnerConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
         turnerConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.05538; 
+        turnerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
         final TalonFXConfiguration hoodConfig = new TalonFXConfiguration();
         hoodConfig.Feedback.SensorToMechanismRatio = 250.0; 
@@ -109,11 +110,6 @@ public class TurretSubsystem extends SubsystemBase {
 
     public void moveTurretAngle(double turretRotations) {
         turretTurner.setControl(turnerMMRequest.withPosition(turretRotations));
-    }
-
-    public void aimAtTarget(double distance) {
-        //insert logic code here
-        //turret angle = arctan(distanceFromTarget) - headingOfRobot
     }
     
     public void stopMotors(){
@@ -196,7 +192,7 @@ public class TurretSubsystem extends SubsystemBase {
         //include a print statement for absolute encoder offset, then set that later.
         //System.out.println(turretShooter.getVelocity());
         //System.out.println(turretHood.getPosition());
-        //System.out.println(turretTurner.getPosition());
+        System.out.println(turretTurner.getPosition());
     // This method will be called once per scheduler run
     }
 }

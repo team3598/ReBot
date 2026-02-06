@@ -35,12 +35,16 @@ public class IntakeSubsystem extends SubsystemBase {
 
         final TalonFXConfiguration intakeVConfig = new TalonFXConfiguration();
         intakeVConfig.Feedback.SensorToMechanismRatio = 1.0; 
-        intakeVConfig.MotionMagic.MotionMagicCruiseVelocity = 60;
-        intakeVConfig.MotionMagic.MotionMagicAcceleration = 60;  
-        intakeVConfig.MotionMagic.MotionMagicJerk = 12.0;         
-        intakeVConfig.Slot0.kP = 0.25; 
-        intakeVConfig.Slot0.kG = 0.5; 
-        intakeVConfig.Slot0.kV = 1.4;
+        intakeVConfig.MotionMagic.MotionMagicCruiseVelocity = 35.0;
+        intakeVConfig.MotionMagic.MotionMagicAcceleration = 100.0;  
+        intakeVConfig.MotionMagic.MotionMagicJerk = 800.0;         
+        intakeVConfig.Slot0.kP = 4.0; 
+        intakeVConfig.Slot0.kI = 0.0;
+        intakeVConfig.Slot0.kD = 0.15;
+        intakeVConfig.Slot0.kG = 0.0; 
+        intakeVConfig.Slot0.kV = 0.15;
+        intakeVConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        intakeVConfig.CurrentLimits.StatorCurrentLimit = 40.0;
         intakeVConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
         intakeVConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0.05; 
         intakeVConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;

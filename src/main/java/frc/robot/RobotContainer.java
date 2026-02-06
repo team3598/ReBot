@@ -16,6 +16,7 @@ import com.pathplanner.lib.events.EventTrigger;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -28,8 +29,9 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PoseSubsystem;
 import frc.robot.subsystems.Turret.TurretSubsystem;
-import frc.robot.commands.Autos.Alignment;
+import frc.robot.commands.Autos.TowerAlignment;
 import frc.robot.commands.TurretCalibrationCommand;
+import frc.robot.LimelightHelpers;
 
 public class RobotContainer {
     private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -51,7 +53,7 @@ public class RobotContainer {
 
     private IntakeSubsystem intake = new IntakeSubsystem();
     private TurretSubsystem turret = new TurretSubsystem();
-    private Alignment alignment = new Alignment();
+    private TowerAlignment alignment = new TowerAlignment();
     private final PoseSubsystem PoseSubsystem = new PoseSubsystem(drivetrain);
     private TurretCalibrationCommand turretCalibrationCommand = new TurretCalibrationCommand(turret, PoseSubsystem);
 
@@ -118,8 +120,24 @@ public class RobotContainer {
         //joystick.povDown().whileTrue(turret.goToAngle(0));
         
         
-        joystick.povUp().whileTrue(intake.setIntakeVerticalPosition(-7.85));
-        joystick.povDown().whileTrue(intake.setIntakeVerticalPosition(0.05));
+        joystick.povUp().onTrue(intake.setIntakeVerticalPosition(-7.80));
+        joystick.povDown().onTrue(intake.setIntakeVerticalPosition(0.05));
+
+
+        RobotModeTriggers.disabled().onTrue(
+            new InstantCommand(() -> LimelightHelpers.SetThrottle("limelight-bright", 100))
+            .ignoringDisable(true) 
+        );
+
+        RobotModeTriggers.teleop().onTrue(
+            new InstantCommand(() -> LimelightHelpers.SetThrottle("limelight-bright", 0))
+            .ignoringDisable(true)
+        );
+
+        RobotModeTriggers.autonomous().onTrue(
+            new InstantCommand(() -> LimelightHelpers.SetThrottle("limelight-bright", 0))
+            .ignoringDisable(true)
+        );
 
         /*joystick.povUp().whileTrue(
             turret.runEnd(
