@@ -8,6 +8,7 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -49,9 +50,11 @@ public class IntakeSubsystem extends SubsystemBase {
         intakeVConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0.05; 
         intakeVConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
         intakeVConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -7.85; 
+        intakeVConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
         var intake_status = m_intake.getConfigurator().apply(configs);
         var intakeV_status = m_intakeVL.getConfigurator().apply(intakeVConfig);
+        var intakeVR_status = m_intakeVR.getConfigurator().apply(intakeVConfig);
 
         if (!intake_status.isOK()) {
             System.out.println("Could not configure Intake Motor: " + intake_status.toString());
@@ -59,6 +62,10 @@ public class IntakeSubsystem extends SubsystemBase {
 
          if (!intakeV_status.isOK()) {
             System.out.println("Could not configure Intake Verticality Motors: " + intakeV_status.toString());
+        }
+
+        if (!intakeVR_status.isOK()) {
+            System.out.println("Could not configure Intake Motor: " + intakeVR_status.toString());
         }
 
         m_intakeVL.setPosition(0);

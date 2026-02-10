@@ -17,7 +17,7 @@ public class TurretCalibrationCommand extends Command {
   private final PoseSubsystem Pose;
   public double hoodTunerNumber;
   public double flywheelTunerNumber;
-  private Translation2d hubPosition = new Translation2d(1.0, 3.75);
+  private Translation2d hubPosition = new Translation2d(4.625, 4.035);
 
   private static final String keyHood = "Tuning/Hood Angle (Deg)"; //the angle of the hood
     private static final String keyFlywheel = "Tuning/Flywheel RPS"; //current flywheel spd

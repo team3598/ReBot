@@ -96,15 +96,18 @@ public class RobotContainer {
         joystick.b().whileTrue(
             turret.runEnd(      
                 () -> {
-                    turret.setShooterVelocity(turretCalibrationCommand.flywheelTunerNumber);
-                    intake.setIntakeVelocity(20);
-                    if (turret.isShooterAtSpeed(turretCalibrationCommand.flywheelTunerNumber)) {
+                    //turret.setShooterVelocity(turretCalibrationCommand.flywheelTunerNumber);
+                    //turret.setHoodAngle(turretCalibrationCommand.hoodTunerNumber);
+                    turret.setShooterVelocity(turret.m_shooterSpeedMap.get(PoseSubsystem.getDistToTarget(turret.hubPosition)));
+                    turret.setHoodAngle(turret.m_hoodAngleMap.get(PoseSubsystem.getDistToTarget(turret.hubPosition)));
+                    if (turret.isShooterAtSpeed(PoseSubsystem.getDistToTarget(turret.hubPosition))) {
                         turret.setFeederVelocity(80);
-                        turret.setHopperSpeed(20);
+                        turret.setHopperSpeed(35);
                     }
                 },
                 () -> {
                     turret.stopMotors();
+                    turret.setHoodAngle(-0.05);
                     intake.setIntakeVelocity(0);
                 })
             );
@@ -112,13 +115,12 @@ public class RobotContainer {
         joystick.x().whileTrue(
             turret.runEnd(
                 () -> turret.setHopperSpeed(20),
-                () -> turret.setHopperSpeed(0)) //20 is backwards, make it -20!!!
+                () -> turret.setHopperSpeed(0))
         );
 
         joystick.povLeft().whileTrue(turret.goToAngle(-90));
         joystick.povRight().whileTrue(turret.goToAngle(90));
         //joystick.povDown().whileTrue(turret.goToAngle(0));
-        
         
         joystick.povUp().onTrue(intake.setIntakeVerticalPosition(-7.80));
         joystick.povDown().onTrue(intake.setIntakeVerticalPosition(0.05));
@@ -157,7 +159,11 @@ public class RobotContainer {
         // Reset the field-centric heading on left bumper press.
         joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
-        drivetrain.registerTelemetry(logger::telemeterize);
+        //drivetrain.registerTelemetry(logger::telemeterize);
+        System.out.println(
+          "Hood Angle: " + turret.m_hoodAngleMap.get(PoseSubsystem.getDistToTarget(turret.hubPosition)) 
+        + "Shooter Power: " + turret.m_hoodAngleMap.get(PoseSubsystem.getDistToTarget(turret.hubPosition)));
+            
     }
 
  
