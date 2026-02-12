@@ -20,7 +20,6 @@ public class TowerAlignment{
     private final Pose2d towerPosition = new Pose2d(1.6, 3.75, Rotation2d.fromDegrees(0));
     private final Pose2d trench1 = new Pose2d(3.375, 7.4, Rotation2d.fromDegrees(0));
     private final Pose2d trench2 = new Pose2d(3.375, .7, Rotation2d.fromDegrees(0));
-    private final Pose2d neutralZone = new Pose2d(6.3, 4, Rotation2d.fromDegrees(0));
     private final PathConstraints constraints = new PathConstraints(3, 3.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
     //insert more positions for important places here
 
@@ -33,7 +32,7 @@ public class TowerAlignment{
         return towerAlignCommand;
     }
 
-   public Command toTrench1() { 
+   public Command toTrench1AS() { 
     final Command driveTrench1Command = AutoBuilder.pathfindToPose(
         trench1,
         constraints,
@@ -41,7 +40,7 @@ public class TowerAlignment{
     return driveTrench1Command;
    } 
 
-    public Command toTrench2() { 
+    public Command toTrench2AS() { 
     final Command driveTrench2Command = AutoBuilder.pathfindToPose(
         trench2,
         constraints,
@@ -49,13 +48,72 @@ public class TowerAlignment{
     return driveTrench2Command;
    }        
 
-  public Command toNeutralZone() { 
+       public Command toNZTrench1() { 
+    final Command driveTrench1NZCommand = AutoBuilder.pathfindToPose(
+        trench2,
+        constraints,
+    0.0);
+    return driveTrench1NZCommand;
+   }       
+
+       public Command toNZTrench2() { 
+    final Command driveTrench2NZCommand = AutoBuilder.pathfindToPose(
+        trench2,
+        constraints,
+    0.0);
+    return driveTrench2NZCommand;
+   }       
+
+
+  public Command toNeutralZoneFromT1() { 
     try{
         // Load the path you want to follow using its name in the GUI
         PathPlannerPath path = PathPlannerPath.fromPathFile("Trench 1 To Neutral");
 
         // Create a path following command using AutoBuilder. This will also trigger event markers.
         return AutoBuilder.followPath(path);
+    } catch (Exception e) {
+        DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
+        return Commands.none();
+   }
+
+}
+
+  public Command toNeutralZoneFromT2() { 
+    try{
+        // Load the path you want to follow using its name in the GUI
+        PathPlannerPath path = PathPlannerPath.fromPathFile("Trench 2 To Neutral");
+
+        // Create a path following command using AutoBuilder. This will also trigger event markers.
+        return AutoBuilder.followPath(path);
+    } catch (Exception e) {
+        DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
+        return Commands.none();
+   }
+
+}
+
+  public Command toT1FromNZ() { 
+    try{
+        // Load the path you want to follow using its name in the GUI
+        PathPlannerPath path = PathPlannerPath.fromPathFile("Neutral to Trench 1");
+
+        // Create a path following command using AutoBuilder. This will also trigger event markers.
+        return AutoBuilder.pathfindThenFollowPath(path, constraints);
+    } catch (Exception e) {
+        DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
+        return Commands.none();
+   }
+
+}
+
+  public Command toT2FromNZ() { 
+    try{
+        // Load the path you want to follow using its name in the GUI
+        PathPlannerPath path = PathPlannerPath.fromPathFile("Neutral to Trench 2");
+
+        // Create a path following command using AutoBuilder. This will also trigger event markers.
+        return AutoBuilder.pathfindThenFollowPath(path, constraints);
     } catch (Exception e) {
         DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
         return Commands.none();

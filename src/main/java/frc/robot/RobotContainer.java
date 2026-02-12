@@ -14,6 +14,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.events.EventTrigger;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -34,6 +35,7 @@ import frc.robot.commands.TurretCalibrationCommand;
 import frc.robot.LimelightHelpers;
 
 public class RobotContainer {
+    
     private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
@@ -56,7 +58,7 @@ public class RobotContainer {
     private TowerAlignment alignment = new TowerAlignment();
     private final PoseSubsystem PoseSubsystem = new PoseSubsystem(drivetrain);
     private TurretCalibrationCommand turretCalibrationCommand = new TurretCalibrationCommand(turret, PoseSubsystem);
-
+    private double coordinate = drivetrain.getState().Pose.getX();
 
     public RobotContainer() {
         configureBindings();
@@ -157,8 +159,15 @@ public class RobotContainer {
         joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // Reset the field-centric heading on left bumper press.
-        joystick.leftBumper().onTrue(alignment.toTrench1().andThen(alignment.toNeutralZone()));
-        joystick.rightBumper().onTrue(alignment.toTrench2().andThen(alignment.toNeutralZone()));
+        
+        
+if(coordinate < 4.5) { 
+    joystick.leftBumper().onTrue(alignment.toTrench1().andThen(alignment.toNeutralZoneFromT1()));
+    joystick.rightBumper().onTrue(alignment.toTrench2().andThen(alignment.toNeutralZoneFromT2()));
+} else { 
+    joystick.leftBumper().onTrue(alignment.toTrench1());
+    joystick.rightBumper().onTrue(alignment.toTrench2());
+}
 
         //drivetrain.registerTelemetry(logger::telemeterize);
         System.out.println(
@@ -172,4 +181,5 @@ public class RobotContainer {
         /* Run the path selected from the auto chooser */
         return autoChooser.getSelected();
     }
+
 }
